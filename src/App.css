@@ -1,0 +1,85 @@
+/* Reset Margin/padding and set full viewport height*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /*to calculate the real weight and height of div by including border and padding*/ 
+}
+
+/*setting Mobile Layout on the portrait*/
+.app {
+  display: flex; /*turn the container into a flex container*/
+  flex-direction: column; /*stack the children from top-to-bottom*/
+  height: 100vh; /*full viewport height*/
+  width: 100vw; /*full viewport width*/
+  overflow: hidden; /*to prevent double scrolling bar*/
+}
+
+.header {
+  display: flex; /*to change to flex container*/
+  justify-content: space-between; /*to space the children evenly*/
+  align-items: center; /*to align the children vertically in the center*/
+  background: #bedac0; /**/
+  color: #white; /*to color the text inside the header*/
+  text-align: center; 
+  padding: 0.3rem; /*rem is font unit size for browser, 1 rem=16px*/
+  position: sticky; /*make the header stik to the parent container (in thi case is the view port)*/
+  top: 0; /*tell browser where to stick in relative to the top the header which is to 0px from the top*/
+  z-index: 99; /*set the stacking order*/
+}
+
+.header-logo {
+  height: 40px; /*adjust the height of the logo*/
+}
+
+.header-logo:hover {
+  opacity: 0.6; /*change the opacity when hover*/
+}
+
+.content-container {
+  display: contents; /* Makes this div invisible in the DOM tree */
+}
+
+.body {
+  background: lightgreen;
+  flex: 1; /*to fill available space*/
+  overflow-y: hidden; /*hide content if overflows*/
+  padding: 0; /*to give space*/
+  position: relative; /*for absolute positioning of the map controls*/
+}
+
+.sidebar{
+  background: lightsteelblue;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  position: sticky; /*make the position stick to the bottom*/
+  bottom: 0; /*define positon to relative to the bottom of the viewport*/
+  z-index: 98;
+}
+
+/*change on the landscape layout (typically > 768px width)*/
+@media (min-width: 768px) and (orientation: landscape) {
+  .app{
+    display: flex;
+    flex-direction: column; /*keep flex to column because we want the header to be at the top*/
+  }
+
+  .content-container{
+    /*wraper for body and sidebar*/
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .body{
+    flex: 8; /*take 20% width by default*/
+    overflow-y: auto;
+  }
+
+  .sidebar{
+    position: static; /*remove sticky*/
+    flex: 2; /*take 80% width by default*/
+    bottom: auto; 
+    height: 100%; /*full height of the container*/
+  }
+}
