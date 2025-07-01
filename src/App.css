@@ -40,7 +40,7 @@
 }
 
 .body {
-  background: lightgreen;
+  background: #FFFFF5;
   flex: 1; /*to fill available space*/
   overflow-y: hidden; /*hide content if overflows*/
   padding: 0; /*to give space*/
