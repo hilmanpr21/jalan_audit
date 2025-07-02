@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from 'react'; //Core React library, must have
+import { useEffect, useRef, useState } from 'react'; //Core React library, must have
 import mapboxgl from "mapbox-gl"; //import Mapbox GL Js for interactive maps
 import 'mapbox-gl/dist/mapbox-gl.css'; //for mapbox stylesheet for proper rendering
 
@@ -17,7 +17,7 @@ const MapComponent = () => {
     // Define default coordinates incase there is no user location
     const [lng] = useState (-0.11); //default longitude
     const [lat] = useState (51.5); //default latitude when the map is loaded for the first time
-    const [zoom] = useState(15); // to define the zoom level when the map is loaded the first time
+    const [zoom] = useState(16); // to define the zoom level when the map is loaded the first time
     
     // Get user location
     useEffect(() => {
@@ -69,6 +69,7 @@ const MapComponent = () => {
 
         // Store map instance
         setMap(newMap);
+
     }, [userLocation, lat, lng, map, zoom]);
 
     // Make smooth transition to the user location
@@ -106,18 +107,6 @@ const MapComponent = () => {
     </div>
     );
 
-
-
-
-    return (
-        <div
-            ref={mapContainer}
-            style={{
-                width: '100%',
-                height: '100%'
-            }}
-        />
-    );
 
 };
 
