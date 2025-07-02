@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'; //for mapbox stylesheet for proper render
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // Define component 
-const MapComponent = () => {
+const MapComponent = ({onPinMove}) => {
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
 
@@ -67,8 +67,26 @@ const MapComponent = () => {
             showUserHeading: true
         }), 'top-right');
 
+        // NEW: Track map movements
+        const updateCenter = () => {
+            const center = newMap.getCenter();
+            if (onPinMove) {
+                onPinMove({
+                lng: center.lng,
+                lat: center.lat
+                });
+            }
+        };
+
+        newMap.on('moveend', updateCenter);
+        updateCenter(); // Initial update
+
         // Store map instance
         setMap(newMap);
+
+        return () => {
+            newMap.off('moveend', updateCenter);
+        };
 
     }, [userLocation, lat, lng, map, zoom]);
 
@@ -90,6 +108,9 @@ const MapComponent = () => {
         ref={mapContainer}
         style={{ width: '100%', height: '100%' }}
         />
+
+        {/* NEW: Fixed viewport center pin */}
+        <div className="viewport-center-pin" />
         
         {error && (
         <div style={{

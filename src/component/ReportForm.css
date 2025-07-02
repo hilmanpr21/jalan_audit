@@ -1,0 +1,40 @@
+.sidebar {
+  background: #bedac0;
+  color: black;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar-title {
+  margin-bottom: 10px;
+}
+
+.sidebar select, 
+.sidebar textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.sidebar textarea {
+  min-height: 70px;
+}
+
+.sidebar button {
+  background: #4CAF50;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar button:disabled {
+  background: #cccccc;
+}
+
+.message {
+  margin-top: 1rem;
+  color: green;
+}

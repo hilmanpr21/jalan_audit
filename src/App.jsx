@@ -3,8 +3,12 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import MapComponent from './map'
+import ReportForm from './component/ReportForm'
 
 function App() {
+  const [pinLocation, setPinLocation] = useState(null); 
+
+
   return (
     <div className='app'>
       <header className="header">
@@ -17,9 +21,11 @@ function App() {
       </header>
       <div className='content-container'>
         <main className="body">
-          <MapComponent />
+          <MapComponent onPinMove={setPinLocation} /> {/* Add the onPinMove prop */}
         </main>
-        <nav className="sidebar">Bottom sidebar</nav>
+        <nav className="sidebar">
+          <ReportForm coordinates={pinLocation} />  {/* Add the ReportForm component */}
+        </nav>
       </div>
     </div>
   )

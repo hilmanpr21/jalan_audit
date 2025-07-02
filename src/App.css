@@ -5,6 +5,14 @@
   box-sizing: border-box; /*to calculate the real weight and height of div by including border and padding*/ 
 }
 
+h3 {
+  font-size: 1.5rem; /*set the font size of h3*/
+}
+
+p {
+  font-size: 0.9rem; /*set the font size of p*/
+}
+
 /*setting Mobile Layout on the portrait*/
 .app {
   display: flex; /*turn the container into a flex container*/
@@ -49,8 +57,8 @@
 
 .sidebar{
   background: lightsteelblue;
-  color: white;
-  padding: 1rem;
+  color: #bedac0;
+  padding: 0.5rem;
   text-align: center;
   position: sticky; /*make the position stick to the bottom*/
   bottom: 0; /*define positon to relative to the bottom of the viewport*/
@@ -82,4 +90,23 @@
     bottom: auto; 
     height: 100%; /*full height of the container*/
   }
+}
+
+.viewport-center-pin {
+  position: absolute; /* Changed from absolute to fixed */
+  top: 45%;
+  left: 45%;
+  width: 40px;
+  height: 40px;
+  background: url('src/assets/image/pin-icon.png') no-repeat center/contain;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Fallback if image doesn't load */
+.viewport-center-pin:after {
+  content: '📍';
+  font-size: 60px;
+  display: block;
+  text-align: center;
 }
