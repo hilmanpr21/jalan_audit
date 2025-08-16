@@ -1,0 +1,88 @@
+.visualization-container {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+}
+
+.visualization-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.visualization-header h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.status-text {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Placeholder Content */
+.placeholder-content {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.placeholder-content h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.placeholder-content p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Test Info Section */
+.test-info {
+    background: #e8f5e8;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 4px solid #4CAF50;
+}
+
+.test-info p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+/* Next Steps Section */
+.next-steps {
+    background: #fff3e0;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
+    border-left: 4px solid #ff9800;
+    text-align: left;
+}
+
+.next-steps h5 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.next-steps ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.next-steps li {
+    margin: 5px 0;
+    color: #555;
+    font-size: 0.9rem;
+}

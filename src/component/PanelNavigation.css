@@ -1,0 +1,55 @@
+.panel-navigation {
+    display: flex ;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px;
+    border-bottom: 1px solid#e0e0e0;
+    background-color: #fafafa;
+}
+
+/*set default for non active navigation*/
+.nav-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-indicator:hover {
+    background: #f0f0f0;
+}
+
+.nav-indicator.active {
+    background-color: #e3f2fd; /* Highlight active indicator */
+    /* color: #ffffff; Change text color for better contrast */
+}
+
+/* Navigation dot styles for inactive mode */
+.nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    transition: background 0.3s ease;
+}
+
+.nav-indicator.active .nav-dot {
+    background: #2196f3;
+}
+
+.nav-label {
+    font-size: 12px;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.nav-indicator.active .nav-label {
+    color: #2196f3;
+    font-weight: 500;
+}

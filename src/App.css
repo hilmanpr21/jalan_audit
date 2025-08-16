@@ -110,3 +110,74 @@ p {
   display: block;
   text-align: center;
 }
+
+/* Panel transition styles */
+.sidebar {
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.panel-content {
+    height: calc(100% - 60px); /* Adjust based on navigation height */
+    overflow-y: auto;
+}
+
+.panel-report .panel-content {
+    transform: translateX(0);
+}
+
+.panel-visualization .panel-content {
+    transform: translateX(0);
+}
+
+/* Smooth transitions for mode switching */
+.sidebar.transitioning {
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        order: 2;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+    
+    .body {
+        order: 1;
+        height: 50vh;
+    }
+}
+
+/* Custom marker styles for map */
+.custom-marker {
+    transition: transform 0.2s ease;
+}
+
+.custom-marker:hover {
+    transform: scale(1.1);
+}
+
+/* Loading animation */
+.marker-loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
