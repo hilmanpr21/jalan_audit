@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import './ReportForm.css';
 
@@ -21,6 +21,14 @@ export default function ReportForm({ coordinates }) {
     const [description, setDescription] = useState(''); // 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setmessage] = useState('');
+
+    // Debug: Log coordinates when they change
+    console.log('📍 ReportForm received coordinates:', coordinates);
+
+    // Track coordinate changes with useEffect
+    useEffect(() => {
+        console.log('🔄 ReportForm useEffect - coordinates changed:', coordinates);
+    }, [coordinates]);
 
     // Handle for subcategory and category checkbox
     const handleCheckboxChange = (value, currentArray, setterFunction) => {

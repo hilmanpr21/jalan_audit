@@ -33,7 +33,7 @@ function App() {
   };
 
   return (
-    <div className='app'>
+    <div className={`app panel-mode-${panelMode}`}>
       <header className="header">
         <div className='header-logo'>
           <img src='/Jalan-Logo-05.png' alt="Jalan Logo" className='header-logo'/>

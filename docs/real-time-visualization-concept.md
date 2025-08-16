@@ -1679,172 +1679,63 @@ Add these styles to `src/App.css`:
 }
 ```
 
-#### Step 1.3: Basic Map Visualization
+#### Step 1.3: Center Pin Visibility Control
 
-**Update map.jsx for Panel Mode Support**
+**Objective**: Ensure the center pin properly shows/hides based on panel mode using your existing CSS-based implementation.
 
-Update `src/map.jsx` to handle different modes:
+**Center Pin Panel Mode Control**
+
+Your existing map.jsx with CSS-based center pin is perfect and doesn't need modification. We just need to ensure proper CSS targeting for conditional visibility.
+
+**Add Panel Mode Classes to App Component**
+
+Update `src/App.jsx` to include panel mode classes at the app level:
 
 ``` jsx
-import { useEffect, useRef, useState } from 'react';
-import mapboxgl from "mapbox-gl";
-import 'mapbox-gl/dist/mapbox-gl.css';
-
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
-
-const MapComponent = ({ onPinMove, onMapReady, panelMode }) => {
-    const mapContainer = useRef(null);
-    const [map, setMap] = useState(null);
-    const [userLocation, setUserLocation] = useState(null);
-    const [error, setError] = useState(null);
-    const [centerMarker, setCenterMarker] = useState(null);
-
-    const [lng] = useState(-0.11);
-    const [lat] = useState(51.5);
-    const [zoom] = useState(16);
-
-    // Get user location
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setUserLocation({
-                        lng: position.coords.longitude,
-                        lat: position.coords.latitude
-                    });
-                },
-                (err) => {
-                    setError(err.message);
-                },
-                { enableHighAccuracy: true }
-            );
-        } else {
-            setError("Location is not supported");
-        }
-    }, []);
-
-    // Initialize the map
-    useEffect(() => {
-        if (!mapContainer.current || map) return;
-
-        const center = userLocation || [lng, lat];
-
-        const newMap = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/hilmanpr21/cm1p8cp9200qt01pi8uagd0wa',
-            center: center,
-            zoom: zoom
-        });
-
-        newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
-        newMap.addControl(new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true,
-            showUserHeading: true
-        }), 'top-right');
-
-        // Track map movements only in report mode
-        const updateCenter = () => {
-            if (panelMode === 'report') {
-                const center = newMap.getCenter();
-                if (onPinMove) {
-                    onPinMove({
-                        lng: center.lng,
-                        lat: center.lat
-                    });
-                }
-            }
-        };
-
-        newMap.on('moveend', updateCenter);
-        updateCenter();
-
-        setMap(newMap);
-        
-        // Notify parent component that map is ready
-        if (onMapReady) {
-            onMapReady(newMap);
-        }
-
-        return () => {
-            newMap.off('moveend', updateCenter);
-        };
-    }, [userLocation, lat, lng, zoom, panelMode]);
-
-    // Handle center pin visibility based on panel mode
-    useEffect(() => {
-        if (!map) return;
-
-        if (panelMode === 'report') {
-            // Show center pin in report mode
-            if (!centerMarker) {
-                const pinElement = document.createElement('div');
-                pinElement.className = 'center-pin';
-                pinElement.innerHTML = '📍';
-                pinElement.style.fontSize = '24px';
-                pinElement.style.textAlign = 'center';
-                pinElement.style.width = '30px';
-                pinElement.style.height = '30px';
-                pinElement.style.transform = 'translate(-50%, -100%)';
-
-                const newCenterMarker = new mapboxgl.Marker(pinElement)
-                    .setLngLat(map.getCenter())
-                    .addTo(map);
-
-                setCenterMarker(newCenterMarker);
-
-                // Update center pin position when map moves
-                const updatePin = () => {
-                    if (newCenterMarker) {
-                        newCenterMarker.setLngLat(map.getCenter());
-                    }
-                };
-
-                map.on('move', updatePin);
-                
-                return () => {
-                    map.off('move', updatePin);
-                };
-            }
-        } else {
-            // Hide center pin in visualization mode
-            if (centerMarker) {
-                centerMarker.remove();
-                setCenterMarker(null);
-            }
-        }
-    }, [map, panelMode, centerMarker]);
-
-    // Smooth transition to user location
-    useEffect(() => {
-        if (map && userLocation) {
-            map.flyTo({
-                center: [userLocation.lng, userLocation.lat],
-                zoom: zoom,
-                essential: true
-            });
-        }
-    }, [map, userLocation, zoom]);
-
-    return (
-        <div className="map-container">
-            <div ref={mapContainer} className="map" />
-            {error && <div className="map-error">Error: {error}</div>}
-            
-            {/* Mode indicator */}
-            <div className={`map-mode-indicator ${panelMode}`}>
-                {panelMode === 'report' ? '📝 Report Mode' : '👁️ View Mode'}
-            </div>
-        </div>
-    );
-};
-
-export default MapComponent;
+return (
+    <div className={`app panel-mode-${panelMode}`}>
+        {/* rest of your component */}
+    </div>
+);
 ```
 
-**Explanation**: Updated map component to handle different panel modes, showing center pin only in report mode and supporting visualization mode with multiple markers.
+**Update App.css for Center Pin Control**
+
+Add these styles to conditionally show/hide the center pin:
+
+``` css
+/* Center pin visibility control based on panel mode */
+.panel-mode-visualisation .viewport-center-pin {
+    display: none !important; /* Hide center pin in visualization mode */
+    opacity: 0;
+}
+
+.panel-mode-report .viewport-center-pin {
+    display: block !important; /* Show center pin in report mode */
+    opacity: 1;
+}
+
+.viewport-center-pin {
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 40px;
+    height: 40px;
+    background: url('src/assets/image/pin-icon.png') no-repeat center/contain;
+    z-index: 10;
+    pointer-events: none;
+    transition: opacity 0.3s ease; /* Smooth show/hide transition */
+}
+```
+
+**Why This Approach is Superior:**
+
+• **✅ Leverages existing implementation**: No complex JavaScript marker management needed\
+• **✅ CSS-based solution**: More performant and reliable than DOM manipulation\
+• **✅ Simple and maintainable**: Pure CSS solution that's easy to understand\
+• **✅ Already tested**: Uses your proven center pin implementation
+
+**Explanation**: This approach keeps your existing map.jsx unchanged and simply adds CSS-based visibility control. The center pin will automatically show in report mode and hide in visualization mode.
 
 #### Step 1.4: Full ReportVisualization Implementation
 
@@ -1854,7 +1745,7 @@ export default MapComponent;
 
 **Update ReportVisualization Component**
 
-Replace the content of `src/component/ReportVisualization.jsx` with:
+Replace the content of `src/component/ReportVisualisation.jsx` with:
 
 ``` jsx
 import { useState, useEffect } from 'react';

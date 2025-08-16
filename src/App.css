@@ -92,6 +92,29 @@ p {
   }
 }
 
+/* Center pin visibility control based on panel mode */
+/* Target from app level since pin is in .body but mode class is on .sidebar */
+.app:has(.panel-visualisation) .viewport-center-pin {
+  display: none !important; /* Hide center pin in visualization mode */
+  opacity: 0;
+}
+
+.app:has(.panel-report) .viewport-center-pin {
+  display: block !important; /* Show center pin in report mode */
+  opacity: 1;
+}
+
+/* Fallback for browsers that don't support :has() */
+.panel-mode-visualisation .viewport-center-pin {
+  display: none !important;
+  opacity: 0;
+}
+
+.panel-mode-report .viewport-center-pin {
+  display: block !important;
+  opacity: 1;
+}
+
 .viewport-center-pin {
   position: absolute; /* Changed from absolute to fixed */
   top: 45%;
@@ -101,6 +124,7 @@ p {
   background: url('src/assets/image/pin-icon.png') no-repeat center/contain;
   z-index: 10;
   pointer-events: none;
+  transition: opacity 0.3s ease; /* Smooth show/hide transition */
 }
 
 /* Fallback if image doesn't load */
