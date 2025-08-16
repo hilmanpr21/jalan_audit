@@ -4,8 +4,8 @@ import './ReportForm.css';
 
 // option Array for the category
 const categoryOptions = [
-    { value: 'physical environment', label: 'Observed—physical environment (i.e. footways, crossings, lighting, step-free access, seating, signage, green/blue spaces, etc.)' },
-    { value: 'emotional perception', label: 'Felt—emotional perceptions (i.e. comfort, sense of belonging, fear of crime, signs of neglect, feelings that may be shaped by the physical environment)' }
+    { value: 'physical environment', label: 'Observed—infrastructure (footways/crossings/lights/seats/spaces)' },
+    { value: 'emotional perception', label: 'Felt—perceptions (comfort/fear/emotions shaped by environment)' }
 ];
 
 // option Array for the subcategory

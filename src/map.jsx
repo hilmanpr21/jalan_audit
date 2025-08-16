@@ -70,6 +70,10 @@ const MapComponent = ({onPinMove}) => {
         // NEW: Track map movements
         const updateCenter = () => {
             const center = newMap.getCenter();
+            console.log('Map center coordinates:', {
+                lng: center.lng,
+                lat: center.lat
+            });
             if (onPinMove) {
                 onPinMove({
                 lng: center.lng,
@@ -79,6 +83,24 @@ const MapComponent = ({onPinMove}) => {
         };
 
         newMap.on('moveend', updateCenter);
+        
+        // Add idle event listener - this coordinate will be used for database submission
+        newMap.on('idle', () => {
+            const center = newMap.getCenter();
+            console.log('Map idle - Center coordinates:', {
+                lng: center.lng,
+                lat: center.lat,
+                timestamp: new Date().toISOString()
+            });
+            // Update coordinates when map becomes idle (for accurate database submission)
+            if (onPinMove) {
+                onPinMove({
+                    lng: center.lng,
+                    lat: center.lat
+                });
+            }
+        });
+        
         updateCenter(); // Initial update
 
         // Store map instance
@@ -86,6 +108,7 @@ const MapComponent = ({onPinMove}) => {
 
         return () => {
             newMap.off('moveend', updateCenter);
+            newMap.off('idle');
         };
 
     }, [userLocation, lat, lng, map, zoom]);
@@ -109,8 +132,10 @@ const MapComponent = ({onPinMove}) => {
         style={{ width: '100%', height: '100%' }}
         />
 
-        {/* NEW: Fixed viewport center pin */}
-        <div className="viewport-center-pin" />
+        {/* NEW: Fixed viewport center pin with circles and pin icon */}
+        <div className="viewport-center-pin">
+            <div className="pin-icon">📍</div>
+        </div>
         
         {error && (
         <div style={{
