@@ -11,6 +11,7 @@ const MapComponent = ({onPinMove, activePanel, isPanelMinimized}) => {
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [reports, setReports] = useState([]); // State to store fetched reports
+    const [currentBasemap, setCurrentBasemap] = useState('default'); // State for basemap selection
 
     //add the state variables for user location
     const [userLocation, setUserLocation] = useState(null);
@@ -20,6 +21,28 @@ const MapComponent = ({onPinMove, activePanel, isPanelMinimized}) => {
     const [lng] = useState (-0.11); //default longitude
     const [lat] = useState (51.5); //default latitude when the map is loaded for the first time
     const [zoom] = useState(16); // to define the zoom level when the map is loaded the first time
+    
+    // Basemap styles
+    const basemapStyles = {
+        default: 'mapbox://styles/hilmanpr21/cm1p8cp9200qt01pi8uagd0wa',
+        light: 'mapbox://styles/mapbox/light-v11',
+        dark: 'mapbox://styles/mapbox/dark-v11'
+    };
+
+    // Function to change basemap
+    const changeBasemap = (basemapType) => {
+        if (map && basemapStyles[basemapType]) {
+            map.setStyle(basemapStyles[basemapType]);
+            setCurrentBasemap(basemapType);
+            
+            // Re-add markers after style change if on visualisation panel
+            map.once('styledata', () => {
+                if (activePanel === 1) {
+                    addReportMarkers();
+                }
+            });
+        }
+    };
     
     // Get user location
     useEffect(() => {
@@ -80,7 +103,7 @@ const MapComponent = ({onPinMove, activePanel, isPanelMinimized}) => {
         //initialize the map
         const newMap = new mapboxgl.Map({
             container: mapContainer.current,
-            style: 'mapbox://styles/hilmanpr21/cm1p8cp9200qt01pi8uagd0wa',
+            style: basemapStyles[currentBasemap],
             center: center,
             zoom: zoom
         });
@@ -498,6 +521,31 @@ const MapComponent = ({onPinMove, activePanel, isPanelMinimized}) => {
                 <div className="pin-icon">📍</div>
             </div>
         )}
+
+        {/* Basemap Layer Selector */}
+        <div className="basemap-selector">
+            <button 
+                className={`basemap-btn ${currentBasemap === 'default' ? 'active' : ''}`}
+                onClick={() => changeBasemap('default')}
+                title="Default Style"
+            >
+                🗺️
+            </button>
+            <button 
+                className={`basemap-btn ${currentBasemap === 'light' ? 'active' : ''}`}
+                onClick={() => changeBasemap('light')}
+                title="Light Mode"
+            >
+                ☀️
+            </button>
+            <button 
+                className={`basemap-btn ${currentBasemap === 'dark' ? 'active' : ''}`}
+                onClick={() => changeBasemap('dark')}
+                title="Dark Mode"
+            >
+                🌙
+            </button>
+        </div>
         
         {error && (
         <div style={{
