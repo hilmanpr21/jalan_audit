@@ -1,0 +1,80 @@
+.sliding-panel-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #bedac0;
+}
+
+/* Navigation dots at the top */
+.panel-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 0.5rem;
+    background: #bedac0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0; /* Remove default button padding */
+    margin: 0; /* Remove default button margin */
+    display: inline-block; /* Ensure proper block behaviour */
+    flex-shrink: 0; /* Prevent shrinking in flex container */
+    box-sizing: border-box; /* Include border in size calculation */
+}
+
+.nav-dot.active {
+    background: #4CAF50;
+    transform: scale(1.2);
+}
+
+.nav-dot:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.nav-dot.active:hover {
+    background: #45a049;
+}
+
+/* Panels container with sliding animation */
+.panels-container {
+    display: flex;
+    width: 200%; /* 100% * number of panels */
+    height: calc(100% - 60px); /* Subtract navigation height */
+    transition: transform 0.3s ease-in-out;
+}
+
+.panel-slide {
+    width: 50%; /* 100% / number of panels */
+    height: 100%;
+    flex-shrink: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure ReportForm maintains its styling in the sliding context */
+.panel-slide .sidebar {
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    position: static;
+    padding: 1rem;
+    flex: 1;
+}
+
+/* Ensure ReportVisualisation takes full height */
+.panel-slide .report-visualisation {
+    flex: 1;
+    height: 100%;
+}

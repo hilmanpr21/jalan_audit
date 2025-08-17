@@ -3,10 +3,11 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import MapComponent from './map'
-import ReportForm from './component/ReportForm'
+import SlidingPanel from './component/SlidingPanel'
 
 function App() {
   const [pinLocation, setPinLocation] = useState(null); 
+  const [activePanel, setActivePanel] = useState(0); // 0 for ReportForm, 1 for ReportVisualisation
 
 
   return (
@@ -21,10 +22,17 @@ function App() {
       </header>
       <div className='content-container'>
         <main className="body">
-          <MapComponent onPinMove={setPinLocation} /> {/* Add the onPinMove prop */}
+          <MapComponent 
+            onPinMove={setPinLocation} 
+            activePanel={activePanel} 
+          />
         </main>
         <nav className="sidebar">
-          <ReportForm coordinates={pinLocation} />  {/* Add the ReportForm component */}
+          <SlidingPanel 
+            coordinates={pinLocation} 
+            activePanel={activePanel}
+            setActivePanel={setActivePanel}
+          />
         </nav>
       </div>
     </div>
