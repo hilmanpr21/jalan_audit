@@ -5,6 +5,36 @@
     flex-direction: column;
     overflow: hidden;
     background: #bedac0;
+    position: relative;
+    transition: height 0.3s ease-in-out;
+}
+
+.sliding-panel-container.minimized {
+    height: 60px; /* Minimized height - just enough for toggle button and nav dots */
+}
+
+/* Minimize toggle button */
+.minimize-toggle {
+    position: absolute;
+    top: 8px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    z-index: 20;
+}
+
+.minimize-toggle:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: #999;
 }
 
 /* Navigation dots at the top */
@@ -16,6 +46,11 @@
     gap: 0.5rem;
     background: #bedac0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease-in-out;
+}
+
+.sliding-panel-container.minimized .panel-navigation {
+    opacity: 0.5; /* Fade out nav dots when minimized */
 }
 
 .nav-dot {
@@ -51,7 +86,13 @@
     display: flex;
     width: 200%; /* 100% * number of panels */
     height: calc(100% - 60px); /* Subtract navigation height */
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.sliding-panel-container.minimized .panels-container {
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
 }
 
 .panel-slide {

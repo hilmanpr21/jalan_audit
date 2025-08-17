@@ -3,14 +3,23 @@ import ReportForm from './ReportForm';
 import ReportVisualisation from './ReportVisualisation';
 import './SlidingPanel.css';
 
-export default function SlidingPanel({ coordinates, activePanel, setActivePanel }) {
+export default function SlidingPanel({ coordinates, activePanel, setActivePanel, isPanelMinimized, setIsPanelMinimized }) {
     const panels = [
         { component: ReportForm, name: 'report-form' },
         { component: ReportVisualisation, name: 'report-visualisation' }
     ];
 
+    const toggleMinimize = () => {
+        setIsPanelMinimized(!isPanelMinimized);
+    };
+
     return (
-        <div className="sliding-panel-container">
+        <div className={`sliding-panel-container ${isPanelMinimized ? 'minimized' : ''}`}>
+            {/* Minimize toggle button */}
+            <button className="minimize-toggle" onClick={toggleMinimize}>
+                {isPanelMinimized ? '▲' : '▼'}
+            </button>
+
             {/* Navigation dots */}
             <div className="panel-navigation">
                 {panels.map((_, index) => (

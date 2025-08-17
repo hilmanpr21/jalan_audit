@@ -8,6 +8,7 @@ import SlidingPanel from './component/SlidingPanel'
 function App() {
   const [pinLocation, setPinLocation] = useState(null); 
   const [activePanel, setActivePanel] = useState(0); // 0 for ReportForm, 1 for ReportVisualisation
+  const [isPanelMinimized, setIsPanelMinimized] = useState(false);
 
 
   return (
@@ -24,7 +25,8 @@ function App() {
         <main className="body">
           <MapComponent 
             onPinMove={setPinLocation} 
-            activePanel={activePanel} 
+            activePanel={activePanel}
+            isPanelMinimized={isPanelMinimized}
           />
         </main>
         <nav className="sidebar">
@@ -32,6 +34,8 @@ function App() {
             coordinates={pinLocation} 
             activePanel={activePanel}
             setActivePanel={setActivePanel}
+            isPanelMinimized={isPanelMinimized}
+            setIsPanelMinimized={setIsPanelMinimized}
           />
         </nav>
       </div>

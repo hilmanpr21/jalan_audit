@@ -7,7 +7,7 @@ import { supabase } from './lib/supabaseClient'; //import Supabase client
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 // Define component 
-const MapComponent = ({onPinMove, activePanel}) => {
+const MapComponent = ({onPinMove, activePanel, isPanelMinimized}) => {
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [reports, setReports] = useState([]); // State to store fetched reports
@@ -471,6 +471,18 @@ const MapComponent = ({onPinMove, activePanel}) => {
             });
         }
     }, [map, userLocation]);
+
+    // Handle map resize when panel is minimized/maximized
+    useEffect(() => {
+        if (map) {
+            // Use setTimeout to ensure DOM changes are complete before resizing
+            const timeoutId = setTimeout(() => {
+                map.resize();
+            }, 100);
+            
+            return () => clearTimeout(timeoutId);
+        }
+    }, [map, isPanelMinimized]);
 
     // Add Error Message Handling
     return (
