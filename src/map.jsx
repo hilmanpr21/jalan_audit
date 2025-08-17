@@ -154,7 +154,214 @@ const MapComponent = ({onPinMove, activePanel}) => {
             map.removeSource('reports-source');
         }
 
-        // Add reports as a GeoJSON source
+        // Function to create canvas-based icons
+        const createCanvasIcon = (categories) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 20;
+            canvas.width = size;
+            canvas.height = size;
+
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = 8;
+
+            const hasPhysical = Array.isArray(categories) ? categories.includes('physical environment') : categories === 'physical environment';
+            const hasEmotional = Array.isArray(categories) ? categories.includes('emotional perception') : categories === 'emotional perception';
+
+            // White border
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius + 1, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+
+            if (hasPhysical && hasEmotional) {
+                // Half blue, half green
+                // Blue half (left)
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.clip();
+                ctx.fillStyle = '#2196F3';
+                ctx.fillRect(0, 0, centerX, size);
+                ctx.restore();
+
+                // Green half (right)
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.clip();
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(centerX, 0, centerX, size);
+                ctx.restore();
+            } else if (hasPhysical) {
+                // Blue circle
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#2196F3';
+                ctx.fill();
+            } else if (hasEmotional) {
+                // Green circle
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#4CAF50';
+                ctx.fill();
+            } else {
+                // Grey circle
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#9E9E9E';
+                ctx.fill();
+            }
+
+            return canvas;
+        };
+
+        // Create and load icons
+        const loadIcon = (iconType, categories) => {
+            return new Promise((resolve) => {
+                const canvas = createCanvasIcon(categories);
+                const imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+                
+                if (!map.hasImage(`icon-${iconType}`)) {
+                    map.addImage(`icon-${iconType}`, imageData);
+                }
+                resolve();
+            });
+        };
+
+        // Determine unique icon types needed
+        const iconTypes = new Set();
+        reports.forEach(report => {
+            const categories = report.category;
+            const hasPhysical = Array.isArray(categories) ? categories.includes('physical environment') : categories === 'physical environment';
+            const hasEmotional = Array.isArray(categories) ? categories.includes('emotional perception') : categories === 'emotional perception';
+            
+            if (hasPhysical && hasEmotional) {
+                iconTypes.add('both');
+            } else if (hasPhysical) {
+                iconTypes.add('physical');
+            } else if (hasEmotional) {
+                iconTypes.add('emotional');
+            } else {
+                iconTypes.add('other');
+            }
+        });
+
+        // Load all required icons
+        const iconPromises = Array.from(iconTypes).map(iconType => {
+            let categories;
+            switch(iconType) {
+                case 'both':
+                    categories = ['physical environment', 'emotional perception'];
+                    break;
+                case 'physical':
+                    categories = ['physical environment'];
+                    break;
+                case 'emotional':
+                    categories = ['emotional perception'];
+                    break;
+                default:
+                    categories = [];
+            }
+            return loadIcon(iconType, categories);
+        });
+
+        Promise.all(iconPromises).then(() => {
+            // Add reports as a GeoJSON source with icon type
+            const geojsonData = {
+                type: 'FeatureCollection',
+                features: reports.map(report => {
+                    const categories = report.category;
+                    const hasPhysical = Array.isArray(categories) ? categories.includes('physical environment') : categories === 'physical environment';
+                    const hasEmotional = Array.isArray(categories) ? categories.includes('emotional perception') : categories === 'emotional perception';
+                    
+                    let iconType;
+                    if (hasPhysical && hasEmotional) {
+                        iconType = 'both';
+                    } else if (hasPhysical) {
+                        iconType = 'physical';
+                    } else if (hasEmotional) {
+                        iconType = 'emotional';
+                    } else {
+                        iconType = 'other';
+                    }
+
+                    return {
+                        type: 'Feature',
+                        properties: {
+                            id: report.id,
+                            category: report.category,
+                            subcategory: report.subcategory,
+                            description: report.description,
+                            created_at: report.created_at,
+                            iconType: iconType
+                        },
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [report.lng, report.lat]
+                        }
+                    };
+                })
+            };
+
+            // Add source
+            map.addSource('reports-source', {
+                type: 'geojson',
+                data: geojsonData
+            });
+
+            // Add symbol layer with custom icons
+            map.addLayer({
+                id: 'reports-layer',
+                type: 'symbol',
+                source: 'reports-source',
+                layout: {
+                    'icon-image': ['concat', 'icon-', ['get', 'iconType']],
+                    'icon-size': 1,
+                    'icon-allow-overlap': true
+                }
+            });
+
+            // Add click event for report markers
+            map.on('click', 'reports-layer', (e) => {
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const properties = e.features[0].properties;
+                
+                // Create popup content
+                const popupContent = `
+                    <div style="max-width: 200px;">
+                        <h4 style="margin: 0 0 8px 0; color: #333;">Report Details</h4>
+                        <p style="margin: 4px 0; font-size: 12px;"><strong>Category:</strong> ${Array.isArray(properties.category) ? properties.category.join(', ') : properties.category}</p>
+                        ${properties.subcategory ? `<p style="margin: 4px 0; font-size: 12px;"><strong>Subcategory:</strong> ${Array.isArray(properties.subcategory) ? properties.subcategory.join(', ') : properties.subcategory}</p>` : ''}
+                        <p style="margin: 4px 0; font-size: 12px;"><strong>Description:</strong> ${properties.description || 'No description'}</p>
+                        <p style="margin: 4px 0; font-size: 10px; color: #666;"><strong>Submitted:</strong> ${new Date(properties.created_at).toLocaleDateString()}</p>
+                    </div>
+                `;
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(popupContent)
+                    .addTo(map);
+            });
+
+            // Change cursor on hover
+            map.on('mouseenter', 'reports-layer', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            map.on('mouseleave', 'reports-layer', () => {
+                map.getCanvas().style.cursor = '';
+            });
+        }).catch(error => {
+            console.error('Error loading icons:', error);
+            // Fallback to simple circle layer if canvas approach fails
+            addSimpleCircleLayer();
+        });
+    };
+
+    // Fallback function for simple circle markers
+    const addSimpleCircleLayer = () => {
         const geojsonData = {
             type: 'FeatureCollection',
             features: reports.map(report => ({
@@ -173,13 +380,11 @@ const MapComponent = ({onPinMove, activePanel}) => {
             }))
         };
 
-        // Add source
         map.addSource('reports-source', {
             type: 'geojson',
             data: geojsonData
         });
 
-        // Add layer with circle style based on category
         map.addLayer({
             id: 'reports-layer',
             type: 'circle',
@@ -188,13 +393,10 @@ const MapComponent = ({onPinMove, activePanel}) => {
                 'circle-radius': 8,
                 'circle-color': [
                     'case',
-                    // Check if category contains 'physical environment'
                     ['in', 'physical environment', ['get', 'category']],
-                    '#2196F3', // Blue for physical environment
-                    // Check if category contains 'emotional perception'
+                    '#2196F3',
                     ['in', 'emotional perception', ['get', 'category']],
-                    '#4CAF50', // Green for emotional perception
-                    // Default color (grey) for unknown categories
+                    '#4CAF50',
                     '#9E9E9E'
                 ],
                 'circle-stroke-width': 2,
@@ -203,12 +405,11 @@ const MapComponent = ({onPinMove, activePanel}) => {
             }
         });
 
-        // Add click event for report markers
+        // Add the same click and hover events
         map.on('click', 'reports-layer', (e) => {
             const coordinates = e.features[0].geometry.coordinates.slice();
             const properties = e.features[0].properties;
             
-            // Create popup content
             const popupContent = `
                 <div style="max-width: 200px;">
                     <h4 style="margin: 0 0 8px 0; color: #333;">Report Details</h4>
@@ -225,7 +426,6 @@ const MapComponent = ({onPinMove, activePanel}) => {
                 .addTo(map);
         });
 
-        // Change cursor on hover
         map.on('mouseenter', 'reports-layer', () => {
             map.getCanvas().style.cursor = 'pointer';
         });
@@ -240,6 +440,18 @@ const MapComponent = ({onPinMove, activePanel}) => {
         if (map && reports.length > 0 && activePanel === 1) {
             addReportMarkers();
         } else if (map && activePanel === 0) {
+            // Close any open popups when switching to ReportForm panel
+            const popups = document.getElementsByClassName('mapboxgl-popup');
+            if (popups.length > 0) {
+                // Close all popups
+                Array.from(popups).forEach(popup => {
+                    const closeButton = popup.querySelector('.mapboxgl-popup-close-button');
+                    if (closeButton) {
+                        closeButton.click();
+                    }
+                });
+            }
+            
             // Remove markers when switching back to ReportForm panel
             const existingMarkers = map.getLayer('reports-layer');
             if (existingMarkers) {

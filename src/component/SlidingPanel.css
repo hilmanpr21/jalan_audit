@@ -19,9 +19,9 @@
 }
 
 .nav-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+    width: 1px;
+    height: 5px;
+    border-radius: 25%; /* Changed from 50% to 0 for square shape */
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;

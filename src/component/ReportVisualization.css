@@ -1,0 +1,30 @@
+.report-visualization {
+    background: #bedac0;
+    color: black;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.visualization-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.visualization-content h3 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.visualization-content p {
+    font-size: 1rem;
+    margin: 0;
+    color: #666;
+}
